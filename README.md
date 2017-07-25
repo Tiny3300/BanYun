@@ -1,2 +1,3 @@
-# README
-一个新项目就要启动啦
+# slideVerification
+简单搬运文字
+![](banyun.gif)
