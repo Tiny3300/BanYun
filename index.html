@@ -1,11 +1,170 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
+﻿<!DOCTYPE html>
+<head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>文字搬运工</title>
+    <style>
+        /*设置整体背景、清空边界和填充等样式*/
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: #C0C0C0;
+        }
+        /*设置文字移动框所在的DIV宽度、背景色、填充及圆角边框等样式*/
+        #wrapper {
+            margin: 50px auto;
+            width: 800px;
+            background: #fff;
+            overflow: hidden;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        /*设置左侧文字输入框背景色、宽高、填充、左浮动及字体大小等样式*/
+        textarea {
+            background: #EFEFD6;
+            border: none;
+            width: 320px;
+            height: 220px;
+            float: left;
+            padding: 10px;
+            font-size: 18px;
+        }
+        /*设置右侧结果框背景色、宽高、填充、右浮动等样式*/
+        #right {
+            width: 320px;
+            height: 220px;
+            background: #63EFF7;
+            float: right;
+            padding: 10px;
+        }
+        /*设置中间操作部分浮动、宽度、文本居中*/
+        #center {
+            float: left;
+            width: 120px;
+            text-align: center;
+        }
+        /*设置中间超链接样式*/
+        #center a {
+            display: block;
+            color: #fff;
+            background: #F76300;
+            text-decoration: none;
+            padding: 10px;
+            margin: 0 5px;
+            font-family: '微软雅黑';
+        }
+        /*设置中间进度显示数字样式*/
+        #center p {
+            font-size: 20px;
+            font-family: '微软雅黑';
+        }
+        /*设置进度显示条的样式并透明显示*/
+        #center ul {
+            margin: 0;
+            padding: 0;
+            font-size: 0;
+            opacity: 0;
+
+        }
+        /*设置进度显示条的每个点*/
+        li {
+            list-style: none;
+            display: inline-block;
+            width: 8px;
+            height: 10px;
+            background: #E7A521;
+            margin: 2px;
+        }
+        /*不允许用户调整左侧文本输入框的大小*/
+        textarea{
+            resize: none;
+        }
+    </style>
+    <script>
+        window.onload=function(){
+           var left =  document.getElementById("left"); /*左侧文本域*/
+           var btn = document.querySelector("#center a");/* 超链接*/
+            var all = document.getElementById("all"); /*获取内容总个数的span*/
+            var right = document.getElementById("right"); /*获取右侧div*/
+            var current = document.getElementById("current"); /*获取当前数字*/
+            var progress = document.getElementById("progress"); /*获取进度条*/
+            var lis = document.querySelectorAll("#progress li");/*获取所有进度条中的小块*/
+            var n = 0;  //进度条中棕黄色块的下标
+
+            /*当超链接点击时，做如下事情*/
+            btn.onclick=function(){
+                /*每次点击按钮时，清空右侧文字，当前数字从0开始*/
+                right.innerHTML='';
+                current.innerHTML='0';
+
+                if(!left.value){
+                    alert('请输入一些内容后再点击！');
+                    return;
+                }
+                //显示内容的总个数:左侧内容的总长度
+                var str = left.value;
+                all.innerHTML = str.length;
+
+                //超链接颜色变浅
+                this.style.opacity='0.5';
+                //显示进度条
+                progress.style.opacity='1';
+
+                //移动文字:自动循环执行
+                var timer = setInterval(function(){
+                        /*获取左侧内容，移动左侧内容的第一个内容
+                         更新左侧内容*/
+                        str = left.value;
+                        right.innerHTML += str.substring(0,1);
+                        left.value = left.value.substring(1);
+                        current.innerHTML = right.innerHTML.length;
+
+                        /*以下三步造成的假象就是一个红块往前走*/
+                        /*1、将进度条中的所有块变土黄色*/
+                        for(var i=0;i<lis.length;i++){
+                            lis[i].style.background='#E7A521';
+                        }
+                        /*2、将其中一个块变红色*/
+                        lis[n].style.background='red';
+                        /*3、下次移动文字内容，下一个块变红色*/
+                        n++;
+
+                        /*红块移到头，再从头开始*/
+                        if(n==lis.length){
+                            n=0;
+                        }
+
+
+                        /*左侧文字移动完毕后，移动事件失效*/
+                        if(!left.value){
+                            clearInterval(timer);
+                            //超链接变回来颜色
+                            btn.style.opacity='1';
+                            //进度条消失
+                            progress.style.opacity='0';
+                        }
+                    },80);
+            }
+        }
+    </script>
 </head>
 <body>
-<h2 style="color: #5c4e80;margin-left: 300px;font-family: 宋体;">搬运文字</h2>
-<img src="banyun.gif" alt="搬运文字"/>
+<div id="wrapper">
+    <textarea id="left"></textarea>
+    <div id="center">
+        <a href="javascript:">把文字右移</a>
+        <p><span id="current">0</span>/<span id="all">0</span></p>
+        <ul id="progress">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div id="right"></div>
+</div>
 </body>
 </html>
